@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.oliveiralia.backend.dto.ProductDTO;
 import com.oliveiralia.backend.entities.Product;
 import com.oliveiralia.backend.repositories.ProductRepository;
+import com.oliveiralia.backend.services.exceptions.ResourceNotFoundException;
 
 
 @Service
@@ -19,12 +20,19 @@ public class ProductService {
 	@Autowired
 	private ProductRepository repository;
 	
-	@Transactional(readOnly = true)
+	/*@Transactional(readOnly = true)
 	public ProductDTO findById(Long id) {
 		Optional<Product> result = repository.findById(id);
 		Product product = result.get();
 		ProductDTO dto = new ProductDTO(product);
 		return dto;		
+	}*/
+	
+	@Transactional(readOnly = true)
+	public ProductDTO findById(Long id) {
+			Product product = repository.findById(id).orElseThrow(
+					() -> new ResourceNotFoundException("Recurso não encontrado."));
+			return new ProductDTO(product);		
 	}
 	
 	@Transactional(readOnly = true)
